@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from time import time
 import numpy as np
+from queue import PriorityQueue
 
 def timeit(tag, t):
     print("{}: {}s".format(tag, time() - t))
@@ -59,6 +60,41 @@ def index_points(points, idx):
     new_points = points[batch_indices, idx, :]
     return new_points
 
+def project_and_sort(xyz):
+  num_points = xyz.shape[1]
+  projected_values = torch.sum(xyz, 2)
+  order = torch.argsort(projected_values)
+  return (projected_values, order)
+
+
+def binary_search(projected, left, right, query):
+  middle = int((left+right)/2)
+  if right < left:
+    return (0, left)
+  if query == projected[middle]:
+    return (1, middle)
+  elif query< projected[middle]:
+    return binary_search(projected, left, middle-1, query)
+  elif query> projected[middle]:
+    return binary_search(projected, middle+1, right, query)
+
+def find_middle_candidate(projected, left, right):
+  query = (projected[left] + projected[right]/2)
+  suc, res = binary_search(projected, left, right, query)
+  if suc:
+    return res, abs(projected[res] - projected[left])
+  elif res == right + 1:
+    return right, 0
+  elif res == 0:
+    return 0, 0
+  #if abs(projected[res-1] - left) > abs(projected[res]- projected[right]):
+  else:
+    if abs(projected[res-1] - query) <= abs(projected[res]- projected[right]):
+      return res - 1, abs(projected[res-1] - projected[left])
+    else:
+      return res, abs(projected[res] - projected[right])
+
+
 
 def farthest_point_sample(xyz, npoint):
     """
@@ -68,23 +104,43 @@ def farthest_point_sample(xyz, npoint):
     Return:
         centroids: sampled pointcloud index, [B, npoint]
     """
+    # implementing the proposed FPS is desinged for batch_size=1 (for inference)
+    print("shape1: ", xyz.shape)
+    print("shape2: ",npoint)
     device = xyz.device
     B, N, C = xyz.shape
-    centroids = torch.zeros(B, npoint, dtype=torch.long).to(device)
-    distance = torch.ones(B, N).to(device) * 1e10
-    farthest = torch.randint(0, N, (B,), dtype=torch.long).to(device)
-    batch_indices = torch.arange(B, dtype=torch.long).to(device)
+    projected_values, order = project_and_sort(xyz)
+    selected_points = torch.randint(1,N-1,(1,))
+    print("projected_values.shpe:", projected_values.shape)
+
+    head_canidate_score = torch.abs(projected_values[0, selected_points[0]] - projected_values[0, 0])
+    tail_candidate_score = torch.abs(projected_values[0, selected_points[0]] - projected_values[0, N-1])
+    candidates = PriorityQueue() 
+    candidates.put(-1 *head_canidate_score, 0, -2, selected_points[0])
+    candidates.put(-1 *tail_candidate_score, N-1, selected_points[0], -1)
+
     for i in range(npoint):
-        centroids[:, i] = farthest
-        centroid = xyz[batch_indices, farthest, :].view(B, 1, 3)
-        # Euclidean distance:
-        #dist = torch.sum((xyz - centroid) ** 2, -1)
-        # Projected Distance:
-        dist = torch.abs(torch.sum(xyz, -1) - torch.sum(centroid, -1))
-        #dist = torch.sum((xyz - centroid) ** 2, -1)
-        mask = dist < distance
-        distance[mask] = dist[mask]
-        farthest = torch.max(distance, -1)[1]
+      _, next_selected, left_selected, right_selected = candidates.get()
+      selected_points = torch.cat((selected_points, next_selected), 0)
+      # Adding the right-side candidate:
+      if not (right_selected == -1 or right_selected==next_selected+1):
+        middle, score = find_middle_candidate(projected_values, next_selected, right_selected)
+        candidates.put(-1 * score, middle, next_selected, right_selected)
+      
+      # Adding the left-side candidate:
+      if not(left_selected == -2 or left_selected==next_selected-1):
+        middle, score = find_middle_candidate(projected_values, left_selected, next_selected)
+        candidates.put(-1 * score, middle, left_selected, next_selected)
+      
+      centroids = torch.zeros(1, npoint, dtype=torch.long)
+      centroids[0, 0:npoint] = order[selected_points]
+      
+      
+      
+
+    # TODO (important): re-arrange the selected points by the order tensor
+
+  
     return centroids
 
 
