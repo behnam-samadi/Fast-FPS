@@ -9,6 +9,8 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+log/classification/pointnet2_cls_ssg/eval.txt
+
 data/
 develop-eggs/
 dist/
