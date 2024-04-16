@@ -71,28 +71,28 @@ def binary_search(projected, left, right, query):
   middle = int((left+right)/2)
   if right < left:
     return (0, left)
-  if query == projected[middle]:
+  if query == projected[0,middle]:
     return (1, middle)
-  elif query< projected[middle]:
+  elif query< projected[0,middle]:
     return binary_search(projected, left, middle-1, query)
-  elif query> projected[middle]:
+  elif query> projected[0,middle]:
     return binary_search(projected, middle+1, right, query)
 
 def find_middle_candidate(projected, left, right):
-  query = (projected[left] + projected[right]/2)
+  query = (projected[0,left] + projected[0,right])/2
   suc, res = binary_search(projected, left, right, query)
   if suc:
-    return res, abs(projected[res] - projected[left])
+    return res, abs(projected[0,res] - projected[0,left])
   elif res == right + 1:
     return right, 0
   elif res == 0:
     return 0, 0
   #if abs(projected[res-1] - left) > abs(projected[res]- projected[right]):
   else:
-    if abs(projected[res-1] - query) <= abs(projected[res]- projected[right]):
-      return res - 1, abs(projected[res-1] - projected[left])
+    if abs(projected[0,res-1] - query) <= abs(projected[0,res]- projected[0,right]):
+      return res - 1, abs(projected[0,res-1] - projected[0,left])
     else:
-      return res, abs(projected[res] - projected[right])
+      return res, abs(projected[0,res] - projected[0,right])
 
 
 
@@ -116,31 +116,37 @@ def farthest_point_sample(xyz, npoint):
     head_canidate_score = torch.abs(projected_values[0, selected_points[0]] - projected_values[0, 0])
     tail_candidate_score = torch.abs(projected_values[0, selected_points[0]] - projected_values[0, N-1])
     candidates = PriorityQueue() 
-    candidates.put(-1 *head_canidate_score, 0, -2, selected_points[0])
-    candidates.put(-1 *tail_candidate_score, N-1, selected_points[0], -1)
+    candidates.put((-1 *head_canidate_score, 0, -2, selected_points[0]))
+    candidates.put((-1 *tail_candidate_score, N-1, selected_points[0], -1))
 
-    for i in range(npoint):
+    for i in range(npoint-1):
       _, next_selected, left_selected, right_selected = candidates.get()
-      selected_points = torch.cat((selected_points, next_selected), 0)
+
+      selected_points = torch.cat((selected_points, torch.tensor([next_selected])), 0)
       # Adding the right-side candidate:
       if not (right_selected == -1 or right_selected==next_selected+1):
         middle, score = find_middle_candidate(projected_values, next_selected, right_selected)
-        candidates.put(-1 * score, middle, next_selected, right_selected)
+        candidates.put((-1 * score, middle, next_selected, right_selected))
       
       # Adding the left-side candidate:
       if not(left_selected == -2 or left_selected==next_selected-1):
         middle, score = find_middle_candidate(projected_values, left_selected, next_selected)
-        candidates.put(-1 * score, middle, left_selected, next_selected)
-      
-      centroids = torch.zeros(1, npoint, dtype=torch.long)
-      centroids[0, 0:npoint] = order[selected_points]
+        candidates.put((-1 * score, middle, left_selected, next_selected))
       
       
-      
-
+    centroids = torch.zeros(1, npoint, dtype=torch.long)
+    print("----------------")
+    print("Final result")
+    print("selected_points", selected_points)
+    print("The shapes: ")
+    print("centroids.shape", centroids.shape)
+    print("order.shape", order.shape)
+    print("selected_points.shape", selected_points.shape)
+    print("That was the shapes")
+    centroids[0, 0:npoint] = order[0,selected_points]
+    print("centroids", centroids)
+    print("*********************************")
     # TODO (important): re-arrange the selected points by the order tensor
-
-  
     return centroids
 
 
