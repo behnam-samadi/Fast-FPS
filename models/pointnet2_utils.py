@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from time import time
+import time as timelib
 import numpy as np
 
 def timeit(tag, t):
@@ -68,6 +69,7 @@ def farthest_point_sample(xyz, npoint):
     Return:
         centroids: sampled pointcloud index, [B, npoint]
     """
+    fps_start = timelib.time()
     device = xyz.device
     B, N, C = xyz.shape
     centroids = torch.zeros(B, npoint, dtype=torch.long).to(device)
@@ -81,6 +83,8 @@ def farthest_point_sample(xyz, npoint):
         mask = dist < distance
         distance[mask] = dist[mask]
         farthest = torch.max(distance, -1)[1]
+    fps_time = timelib.time() - fps_start
+    print("fps time: ", fps_time)
     return centroids
 
 
