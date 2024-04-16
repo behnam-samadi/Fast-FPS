@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from time import time
 import numpy as np
-from queue import PriorityQueue
 
 def timeit(tag, t):
     print("{}: {}s".format(tag, time() - t))
@@ -60,44 +59,6 @@ def index_points(points, idx):
     new_points = points[batch_indices, idx, :]
     return new_points
 
-def project_and_sort(xyz):
-  num_points = xyz.shape[1]
-  projected_values = torch.sum(xyz, 2)
-  projected_values, order = projected_values.sort()
-  return (projected_values, order)
-
-
-def binary_search(projected, left, right, query):
-  middle = int((left+right)/2)
-  if right < left:
-    return (0, left)
-  if query == projected[0,middle]:
-    return (1, middle)
-  elif query< projected[0,middle]:
-    return binary_search(projected, left, middle-1, query)
-  elif query> projected[0,middle]:
-    return binary_search(projected, middle+1, right, query)
-
-def find_middle_candidate(projected, left, right):
-  query = (projected[0,left] + projected[0,right])/2
-  suc, res = binary_search(projected, left, right, query)
-  #print("the result fo r binary search of ", left, " to ", right, " is ", res)
-  #print("left value is: ", projected[0,left], " right value is: ", projected[0,right], "the query is : ", query)
-  if suc:
-    #print("succefull binary search", left, right, res)
-    return res, abs(projected[0,res] - projected[0,left])
-  elif res == right + 1:
-    return right, 0
-  elif res == 0:
-    return 0, 0
-  #if abs(projected[res-1] - left) > abs(projected[res]- projected[right]):
-  else:
-    if abs(projected[0,res-1] - query) <= abs(projected[0,res]- projected[0,right]):
-      return res - 1, abs(projected[0,res-1] - projected[0,left])
-    else:
-      return res, abs(projected[0,res] - projected[0,right])
-
-
 
 def farthest_point_sample(xyz, npoint):
     """
@@ -107,51 +68,19 @@ def farthest_point_sample(xyz, npoint):
     Return:
         centroids: sampled pointcloud index, [B, npoint]
     """
-    # implementing the proposed FPS is desinged for batch_size=1 (for inference)
-    #print("shape1: ", xyz.shape)
-    #print("shape2: ",npoint)
     device = xyz.device
     B, N, C = xyz.shape
-    projected_values, order = project_and_sort(xyz)
-    selected_points = torch.randint(1,N-1,(1,))
-    #print("projected_values.shpe:", projected_values.shape)
-
-    head_canidate_score = torch.abs(projected_values[0, selected_points[0]] - projected_values[0, 0])
-    tail_candidate_score = torch.abs(projected_values[0, selected_points[0]] - projected_values[0, N-1])
-    candidates = PriorityQueue() 
-    candidates.put((-1 *head_canidate_score, 0, -2, selected_points[0]))
-    candidates.put((-1 *tail_candidate_score, N-1, selected_points[0], -1))
-
-    for i in range(npoint-1):
-      _, next_selected, left_selected, right_selected = candidates.get()
-
-      selected_points = torch.cat((selected_points, torch.tensor([next_selected])), 0)
-      # Adding the right-side candidate:
-      if not (right_selected == -1 or right_selected==next_selected+1):
-        middle, score = find_middle_candidate(projected_values, next_selected, right_selected)
-        #print(middle, " added as the right side candidate between ", next_selected, " and ", right_selected)
-        candidates.put((-1 * score, middle, next_selected, right_selected))
-      
-      # Adding the left-side candidate:
-      if not(left_selected == -2 or left_selected==next_selected-1):
-        middle, score = find_middle_candidate(projected_values, left_selected, next_selected)
-        #print(middle, " added as the left side candidate between ", left_selected, " and ", next_selected)
-        candidates.put((-1 * score, middle, left_selected, next_selected))
-      
-      
-    centroids = torch.zeros(1, npoint, dtype=torch.long)
-    #print("----------------")
-    #print("Final result")
-    #print("selected_points", selected_points)
-    #print("The shapes: ")
-    #print("centroids.shape", centroids.shape)
-    #print("order.shape", order.shape)
-    #print("selected_points.shape", selected_points.shape)
-    #print("That was the shapes")
-    centroids[0, 0:npoint] = order[0,selected_points]
-    #print("centroids", centroids)
-    #print("*********************************")
-    # TODO (important): re-arrange the selected points by the order tensor
+    centroids = torch.zeros(B, npoint, dtype=torch.long).to(device)
+    distance = torch.ones(B, N).to(device) * 1e10
+    farthest = torch.randint(0, N, (B,), dtype=torch.long).to(device)
+    batch_indices = torch.arange(B, dtype=torch.long).to(device)
+    for i in range(npoint):
+        centroids[:, i] = farthest
+        centroid = xyz[batch_indices, farthest, :].view(B, 1, 3)
+        dist = torch.sum((xyz - centroid) ** 2, -1)
+        mask = dist < distance
+        distance[mask] = dist[mask]
+        farthest = torch.max(distance, -1)[1]
     return centroids
 
 
@@ -384,4 +313,3 @@ class PointNetFeaturePropagation(nn.Module):
             bn = self.mlp_bns[i]
             new_points = F.relu(bn(conv(new_points)))
         return new_points
-
