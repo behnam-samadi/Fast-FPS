@@ -126,8 +126,9 @@ def farthest_point_sample(xyz, npoint):
     candidates = PriorityQueue() 
     candidates.put((-1 *head_canidate_score, 0, -2, selected_points[0]))
     candidates.put((-1 *tail_candidate_score, N-1, selected_points[0], -1))
-
+    sum_loop_time = 0
     for i in range(npoint-1):
+      loop_start = timelib.time()
       _, next_selected, left_selected, right_selected = candidates.get()
 
       #selected_points = torch.cat((selected_points, torch.tensor([next_selected])), 0)
@@ -143,8 +144,13 @@ def farthest_point_sample(xyz, npoint):
         middle, score = find_middle_candidate(projected_values, left_selected, next_selected)
         #print(middle, " added as the left side candidate between ", left_selected, " and ", next_selected)
         candidates.put((-1 * score, middle, left_selected, next_selected))
+      loop_time = timelib.time() - loop_start
+      sum_loop_time += loop_time
+      #print("loop time: ", loop_time)
       
       
+    loop_time_ave = sum_loop_time / npoint
+    print("average loop time: ", loop_time_ave, "sum loop time: ", sum_loop_time)
     centroids = np.zeros((1, npoint))
     #print("----------------")
     #print("Final result")

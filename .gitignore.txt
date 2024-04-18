@@ -10,7 +10,6 @@ __pycache__/
 .Python
 build/
 data/
-log/classification/pointnet2_cls_ssg/eval.txt
 develop-eggs/
 dist/
 downloads/
