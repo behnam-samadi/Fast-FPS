@@ -76,13 +76,19 @@ def farthest_point_sample(xyz, npoint):
     distance = torch.ones(B, N).to(device) * 1e10
     farthest = torch.randint(0, N, (B,), dtype=torch.long).to(device)
     batch_indices = torch.arange(B, dtype=torch.long).to(device)
+    sum_loop_time = 0
     for i in range(npoint):
+        loop_time_start = timelib.time()
         centroids[:, i] = farthest
         centroid = xyz[batch_indices, farthest, :].view(B, 1, 3)
         dist = torch.sum((xyz - centroid) ** 2, -1)
         mask = dist < distance
         distance[mask] = dist[mask]
         farthest = torch.max(distance, -1)[1]
+        loop_time = timelib.time() - loop_time_start
+        sum_loop_time += loop_time
+    loop_time_ave = sum_loop_time / npoint
+    print("average loop time: ", loop_time_ave, "sum of loop time: ", sum_loop_time)
     fps_time = timelib.time() - fps_start
     print("fps time: ", fps_time)
     return centroids
