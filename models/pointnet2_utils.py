@@ -127,7 +127,9 @@ def farthest_point_sample(xyz, npoint):
     candidates.put((-1 *head_canidate_score, 0, -2, selected_points[0]))
     candidates.put((-1 *tail_candidate_score, N-1, selected_points[0], -1))
     sum_loop_time = 0
+    sum_find_middle_time = 0
     for i in range(npoint-1):
+      find_middle_time = 0
       loop_start = timelib.time()
       _, next_selected, left_selected, right_selected = candidates.get()
 
@@ -135,22 +137,32 @@ def farthest_point_sample(xyz, npoint):
       selected_points.append(next_selected)
       # Adding the right-side candidate:
       if not (right_selected == -1 or right_selected==next_selected+1):
+        find_middle_start_time = timelib.time()
         middle, score = find_middle_candidate(projected_values, next_selected, right_selected)
+        find_middle_time += timelib.time() - find_middle_start_time
+        
+
         #print(middle, " added as the right side candidate between ", next_selected, " and ", right_selected)
         candidates.put((-1 * score, middle, next_selected, right_selected))
       
       # Adding the left-side candidate:
       if not(left_selected == -2 or left_selected==next_selected-1):
+        find_middle_start_time = timelib.time()
         middle, score = find_middle_candidate(projected_values, left_selected, next_selected)
+        find_middle_time += timelib.time() - find_middle_start_time
         #print(middle, " added as the left side candidate between ", left_selected, " and ", next_selected)
         candidates.put((-1 * score, middle, left_selected, next_selected))
       loop_time = timelib.time() - loop_start
+      sum_find_middle_time += find_middle_time
       sum_loop_time += loop_time
       #print("loop time: ", loop_time)
       
       
     loop_time_ave = sum_loop_time / npoint
+    find_middle_time_ave = sum_find_middle_time / npoint
     print("average loop time: ", loop_time_ave, "sum loop time: ", sum_loop_time)
+    print("average find middle time: ", find_middle_time_ave, "sum loop time: ", sum_find_middle_time)
+    print("--------------------------")
     centroids = np.zeros((1, npoint))
     #print("----------------")
     #print("Final result")
