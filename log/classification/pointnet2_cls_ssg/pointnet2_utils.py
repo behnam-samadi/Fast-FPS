@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from time import time
+import time as timelib
 import numpy as np
 
 def timeit(tag, t):
@@ -68,19 +69,44 @@ def farthest_point_sample(xyz, npoint):
     Return:
         centroids: sampled pointcloud index, [B, npoint]
     """
+    fps_start = timelib.time()
     device = xyz.device
     B, N, C = xyz.shape
     centroids = torch.zeros(B, npoint, dtype=torch.long).to(device)
     distance = torch.ones(B, N).to(device) * 1e10
     farthest = torch.randint(0, N, (B,), dtype=torch.long).to(device)
     batch_indices = torch.arange(B, dtype=torch.long).to(device)
+    sum_loop_time = 0
+    sum_dist_calc_time = 0
+    dist = np.zeros((1,xyz.shape[1]))
     for i in range(npoint):
+        loop_time_start = timelib.time()
         centroids[:, i] = farthest
         centroid = xyz[batch_indices, farthest, :].view(B, 1, 3)
-        dist = torch.sum((xyz - centroid) ** 2, -1)
+        dist_calc_time_start = timelib.time()
+        #dist = torch.sum((xyz - centroid) ** 2, -1)
+        xyz = xyz.cpu().numpy()
+        centorid = centroid.cpu().numpy()
+        for i in range(xyz.shape[1]):
+          dist[0,i] = torch.sum((xyz[0,i,:] - centroid[0,0,:])**2, -1)
+        #print("shapes: ", xyz.shape, " , ", centroid.shape)
+        #print(dist.shape)
+        
+        dist_calc_time = timelib.time() - dist_calc_time_start
+        sum_dist_calc_time += dist_calc_time
         mask = dist < distance
         distance[mask] = dist[mask]
         farthest = torch.max(distance, -1)[1]
+        loop_time = timelib.time() - loop_time_start
+        sum_loop_time += loop_time
+    loop_time_ave = sum_loop_time / npoint
+    dist_calc_ave = sum_dist_calc_time / npoint
+    fps_time = timelib.time() - fps_start
+    print("-----------------")
+    print("fps time: ", fps_time)
+    print("average loop time: ", loop_time_ave, "sum of loop time: ", sum_loop_time)
+    print("average dist calc time: ", dist_calc_ave, "sum of dist calc time: ", sum_dist_calc_time)
+    print("share of dist calc", dist_calc_ave / loop_time_ave)
     return centroids
 
 
@@ -313,4 +339,3 @@ class PointNetFeaturePropagation(nn.Module):
             bn = self.mlp_bns[i]
             new_points = F.relu(bn(conv(new_points)))
         return new_points
-
