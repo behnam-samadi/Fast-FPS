@@ -120,7 +120,7 @@ def farthest_point_sample(xyz, npoint):
     pre_process_start_time = timelib.time()
     projected_values, order = project_and_sort(xyz)
     pre_process_time = timelib.time() - pre_process_start_time
-    print("Pre process time: ", pre_process_time)
+    #print("Pre process time: ", pre_process_time)
     selected_points = list(np.expand_dims(np.random.randint(1, N-1), axis=0))
     #print("projected_values.shpe:", projected_values.shape)
 
@@ -163,9 +163,9 @@ def farthest_point_sample(xyz, npoint):
       
     loop_time_ave = sum_loop_time / npoint
     find_middle_time_ave = sum_find_middle_time / npoint
-    print("average loop time: ", loop_time_ave, "sum loop time: ", sum_loop_time)
-    print("average find middle time: ", find_middle_time_ave, "sum loop time: ", sum_find_middle_time)
-    print("--------------------------")
+    #print("average loop time: ", loop_time_ave, "sum loop time: ", sum_loop_time)
+    #print("average find middle time: ", find_middle_time_ave, "sum loop time: ", sum_find_middle_time)
+    #print("--------------------------")
     centroids = np.zeros((1, npoint))
     #print("----------------")
     #print("Final result")
@@ -180,7 +180,7 @@ def farthest_point_sample(xyz, npoint):
     #print("*********************************")
     # TODO (important): re-arrange the selected points by the order tensor
     fps_time = timelib.time() - fps_start_time
-    print("fps time: ", fps_time)
+    #print("fps time: ", fps_time, " for ", npoint , " points ")
     return centroids
 
 
