@@ -63,9 +63,11 @@ def index_points(points, idx):
 
 def project_and_sort(xyz):
   num_points = xyz.shape[1]
-  projected_values = torch.sum(xyz, 2)
-  projected_values, order = projected_values.sort()
-  return (projected_values, order)
+  projected_values = np.sum(xyz, 2)
+  projected_values_ = np.sort(projected_values)
+  order = np.argsort(projected_values)
+  #projected_values, order = projected_values.sort()
+  return (projected_values_, order)
 
 
 def binary_search(projected, left, right, query):
@@ -114,6 +116,7 @@ def farthest_point_sample(xyz, npoint):
     fps_start_time = timelib.time()
     device = xyz.device
     B, N, C = xyz.shape
+    xyz = xyz.numpy()
     pre_process_start_time = timelib.time()
     projected_values, order = project_and_sort(xyz)
     pre_process_time = timelib.time() - pre_process_start_time
