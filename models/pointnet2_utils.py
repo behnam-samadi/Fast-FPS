@@ -180,9 +180,9 @@ def farthest_point_sample(xyz, npoint):
     #print("*********************************")
     # TODO (important): re-arrange the selected points by the order tensor
     fps_time = timelib.time() - fps_start_time
-    with open("/content/drive/MyDrive/Research/results/proposedFPSonGPU", 'a') as f:
-      f.write(str(fps_time))
-      f.write("\n")
+    #with open("/content/drive/MyDrive/Research/results/proposedFPSonGPU", 'a') as f:
+      #f.write(str(fps_time))
+      #f.write("\n")
     #print("fps time: ", fps_time, " for ", npoint , " points ")
     return centroids
 
