@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from time import time
+import time as timelib
 import numpy as np
 from queue import PriorityQueue
 
@@ -62,9 +63,11 @@ def index_points(points, idx):
 
 def project_and_sort(xyz):
   num_points = xyz.shape[1]
-  projected_values = torch.sum(xyz, 2)
-  projected_values, order = projected_values.sort()
-  return (projected_values, order)
+  projected_values = np.sum(xyz, 2)
+  projected_values_ = np.sort(projected_values)
+  order = np.argsort(projected_values)
+  #projected_values, order = projected_values.sort()
+  return (projected_values_, order)
 
 
 def binary_search(projected, left, right, query):
@@ -110,36 +113,60 @@ def farthest_point_sample(xyz, npoint):
     # implementing the proposed FPS is desinged for batch_size=1 (for inference)
     #print("shape1: ", xyz.shape)
     #print("shape2: ",npoint)
+    fps_start_time = timelib.time()
     device = xyz.device
     B, N, C = xyz.shape
+    xyz = xyz.cpu().numpy()
+    pre_process_start_time = timelib.time()
     projected_values, order = project_and_sort(xyz)
-    selected_points = torch.randint(1,N-1,(1,))
+    pre_process_time = timelib.time() - pre_process_start_time
+    #print("Pre process time: ", pre_process_time)
+    selected_points = list(np.expand_dims(np.random.randint(1, N-1), axis=0))
     #print("projected_values.shpe:", projected_values.shape)
 
-    head_canidate_score = torch.abs(projected_values[0, selected_points[0]] - projected_values[0, 0])
-    tail_candidate_score = torch.abs(projected_values[0, selected_points[0]] - projected_values[0, N-1])
+    head_canidate_score = abs(projected_values[0, selected_points[0]] - projected_values[0, 0])
+    tail_candidate_score = abs(projected_values[0, selected_points[0]] - projected_values[0, N-1])
     candidates = PriorityQueue() 
     candidates.put((-1 *head_canidate_score, 0, -2, selected_points[0]))
     candidates.put((-1 *tail_candidate_score, N-1, selected_points[0], -1))
-
+    sum_loop_time = 0
+    sum_find_middle_time = 0
     for i in range(npoint-1):
+      find_middle_time = 0
+      loop_start = timelib.time()
       _, next_selected, left_selected, right_selected = candidates.get()
 
-      selected_points = torch.cat((selected_points, torch.tensor([next_selected])), 0)
+      #selected_points = torch.cat((selected_points, torch.tensor([next_selected])), 0)
+      selected_points.append(next_selected)
       # Adding the right-side candidate:
       if not (right_selected == -1 or right_selected==next_selected+1):
+        find_middle_start_time = timelib.time()
         middle, score = find_middle_candidate(projected_values, next_selected, right_selected)
+        find_middle_time += timelib.time() - find_middle_start_time
+        
+
         #print(middle, " added as the right side candidate between ", next_selected, " and ", right_selected)
         candidates.put((-1 * score, middle, next_selected, right_selected))
       
       # Adding the left-side candidate:
       if not(left_selected == -2 or left_selected==next_selected-1):
+        find_middle_start_time = timelib.time()
         middle, score = find_middle_candidate(projected_values, left_selected, next_selected)
+        find_middle_time += timelib.time() - find_middle_start_time
         #print(middle, " added as the left side candidate between ", left_selected, " and ", next_selected)
         candidates.put((-1 * score, middle, left_selected, next_selected))
+      loop_time = timelib.time() - loop_start
+      sum_find_middle_time += find_middle_time
+      sum_loop_time += loop_time
+      #print("loop time: ", loop_time)
       
       
-    centroids = torch.zeros(1, npoint, dtype=torch.long)
+    loop_time_ave = sum_loop_time / npoint
+    find_middle_time_ave = sum_find_middle_time / npoint
+    #print("average loop time: ", loop_time_ave, "sum loop time: ", sum_loop_time)
+    #print("average find middle time: ", find_middle_time_ave, "sum loop time: ", sum_find_middle_time)
+    #print("--------------------------")
+    centroids = np.zeros((1, npoint))
     #print("----------------")
     #print("Final result")
     #print("selected_points", selected_points)
@@ -152,6 +179,11 @@ def farthest_point_sample(xyz, npoint):
     #print("centroids", centroids)
     #print("*********************************")
     # TODO (important): re-arrange the selected points by the order tensor
+    fps_time = timelib.time() - fps_start_time
+    with open("/content/drive/MyDrive/Research/results/proposedFPSonGPU", 'a') as f:
+      f.write(str(fps_time))
+      f.write("\n")
+    #print("fps time: ", fps_time, " for ", npoint , " points ")
     return centroids
 
 
