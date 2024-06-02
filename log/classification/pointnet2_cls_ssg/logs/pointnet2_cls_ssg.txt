@@ -1,0 +1,134 @@
+2024-01-24 15:27:14,932 - Model - INFO - PARAMETER ...
+2024-01-24 15:27:14,933 - Model - INFO - Namespace(use_cpu=False, gpu='0', batch_size=24, model='pointnet2_cls_ssg', num_category=40, epoch=200, learning_rate=0.001, num_point=1024, optimizer='Adam', log_dir='pointnet2_cls_ssg', decay_rate=0.0001, use_normals=False, process_data=False, use_uniform_sample=False)
+2024-01-24 15:27:14,934 - Model - INFO - Load dataset ...
+2024-01-24 15:49:32,354 - Model - INFO - PARAMETER ...
+2024-01-24 15:49:33,060 - Model - INFO - Namespace(use_cpu=False, gpu='0', batch_size=24, model='pointnet2_cls_ssg', num_category=40, epoch=200, learning_rate=0.001, num_point=1024, optimizer='Adam', log_dir='pointnet2_cls_ssg', decay_rate=0.0001, use_normals=False, process_data=False, use_uniform_sample=False)
+2024-01-24 15:49:33,060 - Model - INFO - Load dataset ...
+2024-01-24 15:50:54,567 - Model - INFO - PARAMETER ...
+2024-01-24 15:50:54,568 - Model - INFO - Namespace(use_cpu=False, gpu='0', batch_size=24, model='pointnet2_cls_ssg', num_category=40, epoch=200, learning_rate=0.001, num_point=1024, optimizer='Adam', log_dir='pointnet2_cls_ssg', decay_rate=0.0001, use_normals=False, process_data=False, use_uniform_sample=False)
+2024-01-24 15:50:54,568 - Model - INFO - Load dataset ...
+2024-01-24 15:52:16,544 - Model - INFO - PARAMETER ...
+2024-01-24 15:52:16,545 - Model - INFO - Namespace(use_cpu=False, gpu='0', batch_size=24, model='pointnet2_cls_ssg', num_category=40, epoch=200, learning_rate=0.001, num_point=1024, optimizer='Adam', log_dir='pointnet2_cls_ssg', decay_rate=0.0001, use_normals=False, process_data=False, use_uniform_sample=False)
+2024-01-24 15:52:16,546 - Model - INFO - Load dataset ...
+2024-01-24 15:53:03,330 - Model - INFO - PARAMETER ...
+2024-01-24 15:53:03,332 - Model - INFO - Namespace(use_cpu=False, gpu='0', batch_size=24, model='pointnet2_cls_ssg', num_category=40, epoch=200, learning_rate=0.001, num_point=1024, optimizer='Adam', log_dir='pointnet2_cls_ssg', decay_rate=0.0001, use_normals=False, process_data=False, use_uniform_sample=False)
+2024-01-24 15:53:03,332 - Model - INFO - Load dataset ...
+2024-01-24 15:53:05,117 - Model - INFO - No existing model, starting training from scratch...
+2024-01-24 15:53:06,302 - Model - INFO - Start training...
+2024-01-24 15:53:06,302 - Model - INFO - Epoch 1 (1/200):
+2024-01-24 16:08:34,584 - Model - INFO - PARAMETER ...
+2024-01-24 16:08:35,088 - Model - INFO - Namespace(use_cpu=False, gpu='0', batch_size=24, model='pointnet2_cls_ssg', num_category=40, epoch=200, learning_rate=0.001, num_point=1024, optimizer='Adam', log_dir='pointnet2_cls_ssg', decay_rate=0.0001, use_normals=False, process_data=False, use_uniform_sample=False)
+2024-01-24 16:08:35,092 - Model - INFO - Load dataset ...
+2024-01-24 16:08:47,294 - Model - INFO - No existing model, starting training from scratch...
+2024-01-24 16:08:48,542 - Model - INFO - Start training...
+2024-01-24 16:08:48,542 - Model - INFO - Epoch 1 (1/200):
+2024-01-24 17:00:10,452 - Model - INFO - PARAMETER ...
+2024-01-24 17:00:10,798 - Model - INFO - Namespace(use_cpu=False, gpu='0', batch_size=24, model='pointnet2_cls_ssg', num_category=40, epoch=200, learning_rate=0.001, num_point=1024, optimizer='Adam', log_dir='pointnet2_cls_ssg', decay_rate=0.0001, use_normals=False, process_data=False, use_uniform_sample=False)
+2024-01-24 17:00:10,800 - Model - INFO - Load dataset ...
+2024-01-24 17:00:14,750 - Model - INFO - No existing model, starting training from scratch...
+2024-01-24 17:00:16,452 - Model - INFO - Start training...
+2024-01-24 17:00:16,452 - Model - INFO - Epoch 1 (1/200):
+2024-01-29 16:44:38,415 - Model - INFO - PARAMETER ...
+2024-01-29 16:44:38,802 - Model - INFO - Namespace(use_cpu=False, gpu='0', batch_size=24, model='pointnet2_cls_ssg', num_category=40, epoch=200, learning_rate=0.001, num_point=1024, optimizer='Adam', log_dir='pointnet2_cls_ssg', decay_rate=0.0001, use_normals=False, process_data=False, use_uniform_sample=False)
+2024-01-29 16:44:38,803 - Model - INFO - Load dataset ...
+2024-01-29 16:44:43,702 - Model - INFO - No existing model, starting training from scratch...
+2024-01-29 16:44:45,011 - Model - INFO - Start training...
+2024-01-29 16:44:45,011 - Model - INFO - Epoch 1 (1/200):
+2024-03-22 18:08:15,872 - Model - INFO - PARAMETER ...
+2024-03-22 18:08:16,386 - Model - INFO - Namespace(use_cpu=False, gpu='0', batch_size=24, model='pointnet2_cls_ssg', num_category=40, epoch=200, learning_rate=0.001, num_point=1024, optimizer='Adam', log_dir='pointnet2_cls_ssg', decay_rate=0.0001, use_normals=False, process_data=False, use_uniform_sample=False)
+2024-03-22 18:08:16,387 - Model - INFO - Load dataset ...
+2024-03-22 18:08:24,425 - Model - INFO - No existing model, starting training from scratch...
+2024-03-22 18:08:26,691 - Model - INFO - Start training...
+2024-03-22 18:08:26,692 - Model - INFO - Epoch 1 (1/200):
+2024-03-22 18:23:49,464 - Model - INFO - Train Instance Accuracy: 0.520224
+2024-03-22 18:28:52,552 - Model - INFO - Test Instance Accuracy: 0.653155, Class Accuracy: 0.543325
+2024-03-22 18:28:52,553 - Model - INFO - Best Instance Accuracy: 0.653155, Class Accuracy: 0.543325
+2024-03-22 18:28:52,553 - Model - INFO - Save model...
+2024-03-22 18:28:52,553 - Model - INFO - Saving at log/classification/pointnet2_cls_ssg/checkpoints/best_model.pth
+2024-03-22 18:28:52,650 - Model - INFO - Epoch 2 (2/200):
+2024-03-22 18:32:47,554 - Model - INFO - Train Instance Accuracy: 0.684553
+2024-03-22 18:33:43,379 - Model - INFO - Test Instance Accuracy: 0.733252, Class Accuracy: 0.676151
+2024-03-22 18:33:43,380 - Model - INFO - Best Instance Accuracy: 0.733252, Class Accuracy: 0.676151
+2024-03-22 18:33:43,380 - Model - INFO - Save model...
+2024-03-22 18:33:43,380 - Model - INFO - Saving at log/classification/pointnet2_cls_ssg/checkpoints/best_model.pth
+2024-03-22 18:33:43,482 - Model - INFO - Epoch 3 (3/200):
+2024-03-22 18:37:36,329 - Model - INFO - Train Instance Accuracy: 0.731911
+2024-03-22 18:38:33,844 - Model - INFO - Test Instance Accuracy: 0.787540, Class Accuracy: 0.721762
+2024-03-22 18:38:33,844 - Model - INFO - Best Instance Accuracy: 0.787540, Class Accuracy: 0.721762
+2024-03-22 18:38:33,844 - Model - INFO - Save model...
+2024-03-22 18:38:33,844 - Model - INFO - Saving at log/classification/pointnet2_cls_ssg/checkpoints/best_model.pth
+2024-03-22 18:38:33,934 - Model - INFO - Epoch 4 (4/200):
+2024-03-22 18:42:29,610 - Model - INFO - Train Instance Accuracy: 0.758232
+2024-03-22 18:43:26,863 - Model - INFO - Test Instance Accuracy: 0.819903, Class Accuracy: 0.745900
+2024-03-22 18:43:26,863 - Model - INFO - Best Instance Accuracy: 0.819903, Class Accuracy: 0.745900
+2024-03-22 18:43:26,863 - Model - INFO - Save model...
+2024-03-22 18:43:26,864 - Model - INFO - Saving at log/classification/pointnet2_cls_ssg/checkpoints/best_model.pth
+2024-03-22 18:43:26,961 - Model - INFO - Epoch 5 (5/200):
+2024-03-22 18:47:19,858 - Model - INFO - Train Instance Accuracy: 0.778862
+2024-03-22 18:48:15,956 - Model - INFO - Test Instance Accuracy: 0.781472, Class Accuracy: 0.741455
+2024-03-22 18:48:15,956 - Model - INFO - Best Instance Accuracy: 0.819903, Class Accuracy: 0.745900
+2024-03-22 18:48:15,956 - Model - INFO - Epoch 6 (6/200):
+2024-03-22 18:52:06,219 - Model - INFO - Train Instance Accuracy: 0.791972
+2024-03-22 18:53:03,067 - Model - INFO - Test Instance Accuracy: 0.848058, Class Accuracy: 0.790676
+2024-03-22 18:53:03,068 - Model - INFO - Best Instance Accuracy: 0.848058, Class Accuracy: 0.790676
+2024-03-22 18:53:03,068 - Model - INFO - Save model...
+2024-03-22 18:53:03,068 - Model - INFO - Saving at log/classification/pointnet2_cls_ssg/checkpoints/best_model.pth
+2024-03-22 18:53:03,194 - Model - INFO - Epoch 7 (7/200):
+2024-03-22 18:56:54,625 - Model - INFO - Train Instance Accuracy: 0.797967
+2024-03-22 18:57:52,604 - Model - INFO - Test Instance Accuracy: 0.816990, Class Accuracy: 0.771948
+2024-03-22 18:57:52,605 - Model - INFO - Best Instance Accuracy: 0.848058, Class Accuracy: 0.790676
+2024-03-22 18:57:52,605 - Model - INFO - Epoch 8 (8/200):
+2024-03-22 19:01:41,366 - Model - INFO - Train Instance Accuracy: 0.811280
+2024-03-22 19:02:39,383 - Model - INFO - Test Instance Accuracy: 0.848382, Class Accuracy: 0.781318
+2024-03-22 19:02:39,384 - Model - INFO - Best Instance Accuracy: 0.848382, Class Accuracy: 0.790676
+2024-03-22 19:02:39,384 - Model - INFO - Save model...
+2024-03-22 19:02:39,384 - Model - INFO - Saving at log/classification/pointnet2_cls_ssg/checkpoints/best_model.pth
+2024-03-22 19:02:39,482 - Model - INFO - Epoch 9 (9/200):
+2024-03-22 19:06:28,841 - Model - INFO - Train Instance Accuracy: 0.820630
+2024-03-22 19:07:24,928 - Model - INFO - Test Instance Accuracy: 0.829935, Class Accuracy: 0.759288
+2024-03-22 19:07:24,929 - Model - INFO - Best Instance Accuracy: 0.848382, Class Accuracy: 0.790676
+2024-03-22 19:07:24,930 - Model - INFO - Epoch 10 (10/200):
+2024-03-22 19:11:14,909 - Model - INFO - Train Instance Accuracy: 0.825711
+2024-03-22 19:12:11,326 - Model - INFO - Test Instance Accuracy: 0.864078, Class Accuracy: 0.804609
+2024-03-22 19:12:11,326 - Model - INFO - Best Instance Accuracy: 0.864078, Class Accuracy: 0.804609
+2024-03-22 19:12:11,327 - Model - INFO - Save model...
+2024-03-22 19:12:11,327 - Model - INFO - Saving at log/classification/pointnet2_cls_ssg/checkpoints/best_model.pth
+2024-03-22 19:12:11,446 - Model - INFO - Epoch 11 (11/200):
+2024-03-22 19:16:02,755 - Model - INFO - Train Instance Accuracy: 0.832114
+2024-03-22 19:16:59,619 - Model - INFO - Test Instance Accuracy: 0.858981, Class Accuracy: 0.818201
+2024-03-22 19:16:59,620 - Model - INFO - Best Instance Accuracy: 0.864078, Class Accuracy: 0.818201
+2024-03-22 19:16:59,620 - Model - INFO - Epoch 12 (12/200):
+2024-03-22 19:20:48,610 - Model - INFO - Train Instance Accuracy: 0.836179
+2024-03-22 19:21:44,153 - Model - INFO - Test Instance Accuracy: 0.852104, Class Accuracy: 0.806284
+2024-03-22 19:21:44,154 - Model - INFO - Best Instance Accuracy: 0.864078, Class Accuracy: 0.818201
+2024-03-22 19:21:44,154 - Model - INFO - Epoch 13 (13/200):
+2024-03-22 19:25:33,125 - Model - INFO - Train Instance Accuracy: 0.837907
+2024-03-22 19:26:30,901 - Model - INFO - Test Instance Accuracy: 0.843042, Class Accuracy: 0.789754
+2024-03-22 19:26:30,901 - Model - INFO - Best Instance Accuracy: 0.864078, Class Accuracy: 0.818201
+2024-03-22 19:26:30,901 - Model - INFO - Epoch 14 (14/200):
+2024-03-22 19:30:20,049 - Model - INFO - Train Instance Accuracy: 0.842886
+2024-03-22 19:31:16,301 - Model - INFO - Test Instance Accuracy: 0.880583, Class Accuracy: 0.836546
+2024-03-22 19:31:16,302 - Model - INFO - Best Instance Accuracy: 0.880583, Class Accuracy: 0.836546
+2024-03-22 19:31:16,302 - Model - INFO - Save model...
+2024-03-22 19:31:16,302 - Model - INFO - Saving at log/classification/pointnet2_cls_ssg/checkpoints/best_model.pth
+2024-03-22 19:31:16,442 - Model - INFO - Epoch 15 (15/200):
+2024-03-22 19:35:06,638 - Model - INFO - Train Instance Accuracy: 0.844004
+2024-03-22 19:36:02,998 - Model - INFO - Test Instance Accuracy: 0.882605, Class Accuracy: 0.838434
+2024-03-22 19:36:02,999 - Model - INFO - Best Instance Accuracy: 0.882605, Class Accuracy: 0.838434
+2024-03-22 19:36:02,999 - Model - INFO - Save model...
+2024-03-22 19:36:02,999 - Model - INFO - Saving at log/classification/pointnet2_cls_ssg/checkpoints/best_model.pth
+2024-03-22 19:36:03,095 - Model - INFO - Epoch 16 (16/200):
+2024-03-22 19:39:53,637 - Model - INFO - Train Instance Accuracy: 0.847256
+2024-03-22 19:40:49,329 - Model - INFO - Test Instance Accuracy: 0.877913, Class Accuracy: 0.817299
+2024-03-22 19:40:49,329 - Model - INFO - Best Instance Accuracy: 0.882605, Class Accuracy: 0.838434
+2024-03-22 19:40:49,329 - Model - INFO - Epoch 17 (17/200):
+2024-03-22 19:44:40,082 - Model - INFO - Train Instance Accuracy: 0.859146
+2024-03-22 19:45:37,842 - Model - INFO - Test Instance Accuracy: 0.891748, Class Accuracy: 0.846876
+2024-03-22 19:45:37,843 - Model - INFO - Best Instance Accuracy: 0.891748, Class Accuracy: 0.846876
+2024-03-22 19:45:37,843 - Model - INFO - Save model...
+2024-03-22 19:45:37,843 - Model - INFO - Saving at log/classification/pointnet2_cls_ssg/checkpoints/best_model.pth
+2024-03-22 19:45:37,942 - Model - INFO - Epoch 18 (18/200):
+2024-03-22 19:49:27,573 - Model - INFO - Train Instance Accuracy: 0.857622
+2024-03-22 19:50:23,584 - Model - INFO - Test Instance Accuracy: 0.862136, Class Accuracy: 0.818444
+2024-03-22 19:50:23,584 - Model - INFO - Best Instance Accuracy: 0.891748, Class Accuracy: 0.846876
+2024-03-22 19:50:23,585 - Model - INFO - Epoch 19 (19/200):

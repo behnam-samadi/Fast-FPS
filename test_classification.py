@@ -11,6 +11,7 @@ import logging
 from tqdm import tqdm
 import sys
 import importlib
+import cProfile
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = BASE_DIR
@@ -39,10 +40,10 @@ def test(model, loader, num_class=40, vote_num=1):
 
     for j, (points, target) in tqdm(enumerate(loader), total=len(loader)):
         if not args.use_cpu:
-            points, target = points.cuda(), target.cuda()
+            points, target = points, target
 
         points = points.transpose(2, 1)
-        vote_pool = torch.zeros(target.size()[0], num_class).cuda()
+        vote_pool = torch.zeros(target.size()[0], num_class)
 
         for _ in range(vote_num):
             pred, _ = classifier(points)
@@ -100,9 +101,9 @@ def main(args):
 
     classifier = model.get_model(num_class, normal_channel=args.use_normals)
     if not args.use_cpu:
-        classifier = classifier.cuda()
+        classifier = classifier
 
-    checkpoint = torch.load(str(experiment_dir) + '/checkpoints/best_model.pth')
+    checkpoint = torch.load(str(experiment_dir) + '/checkpoints/best_model.pth', map_location=torch.device('cpu'))
     classifier.load_state_dict(checkpoint['model_state_dict'])
 
     with torch.no_grad():
@@ -112,4 +113,5 @@ def main(args):
 
 if __name__ == '__main__':
     args = parse_args()
+    cProfile.run("main(args)")
     main(args)
