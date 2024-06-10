@@ -5,6 +5,7 @@ from time import time
 import time as timelib
 import numpy as np
 from queue import PriorityQueue
+from pyhull.convex_hull import ConvexHull
 
 def timeit(tag, t):
     print("{}: {}s".format(tag, time() - t))
@@ -101,8 +102,14 @@ def find_middle_candidate(projected, left, right):
       return res, abs(projected[0,res] - projected[0,right])
 
 
-
 def farthest_point_sample(xyz, npoint):
+    xyz_n = xyz.numpy()
+    #print(xyz.shape)
+    d = ConvexHull(xyz_n[0,:,:])
+    return proposed_farthest_point_sample(xyz, npoint)
+
+
+def proposed_farthest_point_sample(xyz, npoint):
     """
     Input:
         xyz: pointcloud data, [B, N, 3]
