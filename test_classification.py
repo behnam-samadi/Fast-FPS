@@ -11,6 +11,7 @@ import logging
 from tqdm import tqdm
 import sys
 import importlib
+import cProfile
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = BASE_DIR
@@ -112,4 +113,5 @@ def main(args):
 
 if __name__ == '__main__':
     args = parse_args()
+    #cProfile.run("main(args)")
     main(args)

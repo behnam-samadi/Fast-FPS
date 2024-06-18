@@ -5,6 +5,8 @@ from time import time
 import time as timelib
 import numpy as np
 from queue import PriorityQueue
+import time as timelib
+from torch_cluster import fps
 
 def timeit(tag, t):
     print("{}: {}s".format(tag, time() - t))
@@ -101,22 +103,9 @@ def find_middle_candidate(projected, left, right):
       return res, abs(projected[0,res] - projected[0,right])
 
 
-
-def farthest_point_sample(xyz, npoint):
-    """
-    Input:
-        xyz: pointcloud data, [B, N, 3]
-        npoint: number of samples
-    Return:
-        centroids: sampled pointcloud index, [B, npoint]
-    """
-    # implementing the proposed FPS is desinged for batch_size=1 (for inference)
-    #print("shape1: ", xyz.shape)
-    #print("shape2: ",npoint)
+def fps_(xyz, npoint):
     fps_start_time = timelib.time()
-    device = xyz.device
     B, N, C = xyz.shape
-    xyz = xyz.cpu().numpy()
     pre_process_start_time = timelib.time()
     projected_values, order = project_and_sort(xyz)
     pre_process_time = timelib.time() - pre_process_start_time
@@ -180,11 +169,102 @@ def farthest_point_sample(xyz, npoint):
     #print("*********************************")
     # TODO (important): re-arrange the selected points by the order tensor
     fps_time = timelib.time() - fps_start_time
+    #print("fps time: ", fps_time)
     #with open("/content/drive/MyDrive/Research/results/proposedFPSonGPU", 'a') as f:
       #f.write(str(fps_time))
       #f.write("\n")
     #print("fps time: ", fps_time, " for ", npoint , " points ")
     return centroids
+
+def farthest_point_sample_from_IFPN(pcls, num_pnts):
+    """
+    Args:
+        pcls:  A batch of point clouds, (B, N, 3).
+        num_pnts:  Target number of points.
+    """
+    #num_pnts = 5
+    #print("pcls", pcls)
+    #print("pcls.shape", pcls.shape)
+    #print("--------------------")
+    #print(num_pnts)
+    #print(type(pcls))
+    #print(pcls.shape)
+    ratio = 0.01 + num_pnts / pcls.size(1)
+    sampled = []
+    indices = []
+    for i in range(pcls.size(0)):
+        idx = fps(pcls[i], ratio=ratio, random_start=False)[:num_pnts]
+        sampled.append(pcls[i:i+1, idx, :])
+        indices.append(idx)
+    sampled = torch.cat(sampled, dim=0)
+    #print(sampled)
+    #print(indices)
+    #print(sampled.shape)
+    #print(type(indices))
+    #print(len(indices))
+    #print(type(indices[0]).shape)
+    #print("outputs: ")
+    #print(sampled)
+    #print(indices[0])
+    #print("output: ", indices[0], type(indices[0]), indices[0].shape)
+    result = indices[0].unsqueeze(0)
+    return result
+    return indices[0]
+    return sampled, indices
+
+
+
+def farthest_point_sample_orig_repo(xyz, npoint):
+    """
+    Input:
+        xyz: pointcloud data, [B, N, 3]
+        npoint: number of samples
+    Return:
+        centroids: sampled pointcloud index, [B, npoint]
+    """
+    device = xyz.device
+    B, N, C = xyz.shape
+    centroids = torch.zeros(B, npoint, dtype=torch.long).to(device)
+    distance = torch.ones(B, N).to(device) * 1e10
+    farthest = torch.randint(0, N, (B,), dtype=torch.long).to(device)
+    batch_indices = torch.arange(B, dtype=torch.long).to(device)
+    for i in range(npoint):
+        centroids[:, i] = farthest
+        centroid = xyz[batch_indices, farthest, :].view(B, 1, 3)
+        dist = torch.sum((xyz - centroid) ** 2, -1)
+        mask = dist < distance
+        distance[mask] = dist[mask]
+        farthest = torch.max(distance, -1)[1]
+    print("output: ", centroids, type(centroids), centroids.shape)
+    return centroids
+
+
+
+
+def farthest_point_sample(xyz, npoint):
+    """
+    Input:
+        xyz: pointcloud data, [B, N, 3]
+        npoint: number of samples
+    Return:
+        centroids: sampled pointcloud index, [B, npoint]
+    """
+    # implementing the proposed FPS is desinged for batch_size=1 (for inference)
+    #print("shape1: ", xyz.shape)
+    #print("shape2: ",npoint)
+    fps_start_time = timelib.time()
+    device = xyz.device
+    B, N, C = xyz.shape
+    xyz = xyz.cpu().numpy()
+    result = fps_(xyz, npoint)
+    #print(result)
+    
+    #print(result.shape)
+    #print("output --------------")
+    #print(type(result))
+    #print(result.shape)
+    return result
+    
 
 
 def query_ball_point(radius, nsample, xyz, new_xyz):
