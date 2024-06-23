@@ -75,6 +75,7 @@ class ModelNetDataLoader(Dataset):
         shape_names = ['_'.join(x.split('_')[0:-1]) for x in shape_ids[split]]
         self.datapath = [(shape_names[i], os.path.join(self.root, shape_names[i], shape_ids[split][i]) + '.txt') for i
                          in range(len(shape_ids[split]))]
+        self.datapath = self.datapath[::10]
         print('The size of %s data is %d' % (split, len(self.datapath)))
 
         if self.uniform:

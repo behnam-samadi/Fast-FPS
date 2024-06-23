@@ -5,6 +5,8 @@ from time import time
 import time as timelib
 import numpy as np
 from queue import PriorityQueue
+from torch_cluster import fps
+
 
 def timeit(tag, t):
     print("{}: {}s".format(tag, time() - t))
@@ -101,8 +103,43 @@ def find_middle_candidate(projected, left, right):
       return res, abs(projected[0,res] - projected[0,right])
 
 
+def farthest_point_sample(pcls, num_pnts):
+    """
+    Args:
+        pcls:  A batch of point clouds, (B, N, 3).
+        num_pnts:  Target number of points.
+    """
+    #num_pnts = 5
+    #print("pcls", pcls)
+    #print("pcls.shape", pcls.shape)
+    #print("--------------------")
+    #print(num_pnts)
+    #print(type(pcls))
+    #print(pcls.shape)
+    ratio = 0.01 + num_pnts / pcls.size(1)
+    sampled = []
+    indices = []
+    for i in range(pcls.size(0)):
+        idx = fps(pcls[i], ratio=ratio, random_start=False)[:num_pnts]
+        sampled.append(pcls[i:i+1, idx, :])
+        indices.append(idx)
+    sampled = torch.cat(sampled, dim=0)
+    #print(sampled)
+    #print(indices)
+    #print(sampled.shape)
+    #print(type(indices))
+    #print(len(indices))
+    #print(type(indices[0]).shape)
+    #print("outputs: ")
+    #print(sampled)
+    #print(indices[0])
+    #raise(False)
+    #return indices[0]
+    result = indices[0].unsqueeze(0)
+    return result
+    return sampled, indices
 
-def farthest_point_sample(xyz, npoint):
+def farthest_point_sample_proposed(xyz, npoint):
     """
     Input:
         xyz: pointcloud data, [B, N, 3]
@@ -181,6 +218,33 @@ def farthest_point_sample(xyz, npoint):
     # TODO (important): re-arrange the selected points by the order tensor
     fps_time = timelib.time() - fps_start_time
     #print("fps time: ", fps_time, " for ", npoint , " points ")
+    return centroids
+
+
+
+
+
+def farthest_point_sample_original(xyz, npoint):
+    """
+    Input:
+        xyz: pointcloud data, [B, N, 3]
+        npoint: number of samples
+    Return:
+        centroids: sampled pointcloud index, [B, npoint]
+    """
+    device = xyz.device
+    B, N, C = xyz.shape
+    centroids = torch.zeros(B, npoint, dtype=torch.long).to(device)
+    distance = torch.ones(B, N).to(device) * 1e10
+    farthest = torch.randint(0, N, (B,), dtype=torch.long).to(device)
+    batch_indices = torch.arange(B, dtype=torch.long).to(device)
+    for i in range(npoint):
+        centroids[:, i] = farthest
+        centroid = xyz[batch_indices, farthest, :].view(B, 1, 3)
+        dist = torch.sum((xyz - centroid) ** 2, -1)
+        mask = dist < distance
+        distance[mask] = dist[mask]
+        farthest = torch.max(distance, -1)[1]
     return centroids
 
 
