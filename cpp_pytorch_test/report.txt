@@ -1,0 +1,21 @@
+Looking in indexes: https://nexus.ferdowsi.cloud/repository/Pypi/simple/, https://pypi.org/simple
+Processing /home/ubuntu/Research/cpp_pytorch_test
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Building wheels for collected packages: cppcuda-tutorial
+  Building wheel for cppcuda-tutorial (setup.py): started
+  Building wheel for cppcuda-tutorial (setup.py): finished with status 'error'
+  Running setup.py clean for cppcuda-tutorial
+Failed to build cppcuda-tutorial
+Installing collected packages: cppcuda-tutorial
+  Attempting uninstall: cppcuda-tutorial
+    Found existing installation: cppcuda-tutorial 1.0
+    Uninstalling cppcuda-tutorial-1.0:
+      Successfully uninstalled cppcuda-tutorial-1.0
+  Running setup.py install for cppcuda-tutorial: started
+  Running setup.py install for cppcuda-tutorial: finished with status 'error'
+  Rolling back uninstall of cppcuda-tutorial
+  Moving to /home/ubuntu/anaconda3/envs/newenv2023/lib/python3.7/site-packages/cppcuda_tutorial-1.0.dist-info/
+   from /home/ubuntu/anaconda3/envs/newenv2023/lib/python3.7/site-packages/~~pcuda_tutorial-1.0.dist-info
+  Moving to /home/ubuntu/anaconda3/envs/newenv2023/lib/python3.7/site-packages/cppcuda_tutorial.cpython-37m-x86_64-linux-gnu.so
+   from /tmp/pip-uninstall-7g5snuw4/cppcuda_tutorial.cpython-37m-x86_64-linux-gnu.so
