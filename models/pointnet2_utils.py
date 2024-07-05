@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from time import time
 import numpy as np
+import cppcuda_tutorial
 
 def timeit(tag, t):
     print("{}: {}s".format(tag, time() - t))
@@ -61,6 +62,12 @@ def index_points(points, idx):
 
 
 def farthest_point_sample(xyz, npoint):
+    #xyz = xyz.type(torch.LongTensor)
+    print(type(npoint))
+    print("------------")   
+    print(xyz.dtype)
+    print("------------")
+    return cppcuda_tutorial.farthest_point_sampling(xyz, npoint)
     """
     Input:
         xyz: pointcloud data, [B, N, 3]

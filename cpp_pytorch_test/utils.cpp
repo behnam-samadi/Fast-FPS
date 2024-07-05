@@ -15,11 +15,20 @@ at::Tensor getFirstElement(at::Tensor tensor) {
 
 }
 
-struct candidate {
+class candidate {
+  public:
     float score;
     int64_t index;
     int64_t left_selected;
     int64_t right_selected;
+    candidate(float score=0, int64_t index=0, int64_t left_selected=0, int64_t right_selected=0)
+    {
+      this->score = score;
+      this->index = index;
+      this->left_selected = left_selected;
+      this->right_selected = right_selected;
+    }
+    
     //_candidate(float score_value, int64_t index_value) : score(score_value), index(index_value) // Create an object of type _book.
 };
 
@@ -194,32 +203,53 @@ int64_t test_for_binary_search_index(at::Tensor& projected, int64_t left, int64_
 }
 
 
-torch::Tensor farthest_point_sampling(at::Tensor xyz, at::Tensor npoint)
+torch::Tensor farthest_point_sampling(torch::Tensor& xyz, int64_t npoint)
 {
+  
   sorted_point_cloud sorted = project_and_sort(xyz);
+  
+  int centroids_count = 0;
   at::Tensor projected_values = sorted.projected_values;
   at::Tensor order = sorted.order;
+  
   int64_t B = xyz.size(0);
   int64_t N = xyz.size(1);
-  vector <int64_t> selected_points;
+  
+  torch::Tensor centroids = torch::zeros({npoint}, torch::dtype(torch::kLong));
+  auto out_data = centroids.data_ptr<int64_t>();
+  
+  //vector <int64_t> selected_points;
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_int_distribution<int64_t> dis(2, N-1);
-  selected_points.push_back(dis(gen));
-  float head_canidate_score = abs(projected_values[0][selected_points[0]] - projected_values[0][0]).item().toFloat();
-  float tail_candidate_score = abs(projected_values[0][selected_points[0]] - projected_values[0][N-1]).item().toFloat();
+  
+
+  //centroids.at({centroids_count++}) = dis(gen);
+  int64_t first_selected = dis(gen);
+  out_data[centroids_count++] = first_selected;
+  int64_t centroids_0 = first_selected;
+  //int64_t centroids_0 = centroids[0].item().toInt();
+  cout<<endl<<"function is called"<<endl;
+  float head_canidate_score = abs(projected_values[0][centroids_0] - projected_values[0][0]).item().toFloat();
+  float tail_candidate_score = abs(projected_values[0][centroids_0] - projected_values[0][N-1]).item().toFloat();
+  
   priority_queue<candidate, vector<candidate>, less<candidate>> candidates;
   //candidates.push({10                     , 5, 90, -34               });
-  candidates.push({-1 *head_canidate_score, 0, -2, selected_points[0]});
-  candidates.push({-1 *tail_candidate_score, N-1, selected_points[0], -1});
-  for (int i = 0; i < N -1; i++)
+  candidate temp1(-1 *head_canidate_score, 0, -2, centroids_0);
+  candidate temp2(-1 *tail_candidate_score, N-1, centroids_0, -1);
+  candidates.push(temp1);
+  candidates.push(temp2);
+  
+  for (int i = 0; i < npoint -1; i++)
   {
      candidate temp_candidate = candidates.top();
      int64_t next_selected = temp_candidate.index;
      int64_t left_selected = temp_candidate.left_selected;
      int64_t right_selected = temp_candidate.right_selected;
 
-     selected_points.push_back(next_selected);
+     //centroids.at({centroids_count++}) = next_selected;
+     out_data[centroids_count++] = next_selected;
+     //selected_points.push_back(next_selected);
      // Adding the right candidate:
      if (!(right_selected == -1 || right_selected==next_selected+1))
      {
@@ -241,8 +271,8 @@ torch::Tensor farthest_point_sampling(at::Tensor xyz, at::Tensor npoint)
       float score = temp.score;
       candidates.push({-1 * score, middle, left_selected, next_selected});
      }
-     torch::Tensor centroids = torch::zeros({1, N});
-     centroids.index_put_(torch:: tensor({0, torch::arange(selected_points.size(1)).to(torch::long)}, order.index_select(1, selected_points));
+     
+     //centroids.index_put_(torch:: tensor({0, torch::arange(selected_points.size(1)).to(torch::long)}, order.index_select(1, selected_points));
   }
   return centroids;
   //return head_canidate_score - tail_candidate_score;

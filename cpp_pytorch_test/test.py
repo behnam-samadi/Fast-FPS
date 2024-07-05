@@ -20,11 +20,23 @@ A = torch.rand(500, 2014, 3)
 #print(cppcuda_tutorial.test_working_with_queue())
 #A = torch.tensor([4,3,-9,9,34,-90,23,86,12,1]).sort()
 A = torch.tensor([[-90,  -9,   1,   3,   4,   9,  12,  23,  34,  100]])
+print(A.dtype)
 
 print(cppcuda_tutorial.test_for_binary_search_score(A, 0, 9, -10))
 print(cppcuda_tutorial.test_for_binary_search_index(A, 0, 9, -8.02))
 print(cppcuda_tutorial.test_for_find_middle_candidate_score(A, 0, 9))
 print(cppcuda_tutorial.test_for_find_middle_candidate_index(A, 0, 9))
+#xyz = torch.tensor(1,1024, 3)
+xyz = torch.rand((1, 2014, 3))
+xyz = xyz.float() 
+
+print(xyz)
+print(xyz.shape)
+result = cppcuda_tutorial.farthest_point_sampling(xyz, 512)
+#print(result[0][1:100])
+print(result)
+print(result.shape)
+
 #print(cppcuda_tutorial.project_and_sort(A).order)
 #print(cppcuda_tutorial.farthest_point_sampling(A, A))
 
